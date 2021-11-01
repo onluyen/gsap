@@ -5,7 +5,7 @@
 }(this, (function (exports) { 'use strict';
 
 	/*!
-	 * ScrollTrigger 3.3.4
+	 * ScrollTrigger 3.3.3
 	 * https://greensock.com
 	 *
 	 * @license Copyright 2008-2020, GreenSock. All rights reserved.
@@ -30,8 +30,6 @@
 	    _refreshing,
 	    _pointerIsDown,
 	    _transformProp,
-	    _i,
-	    _limitCallbacks,
 	    _startup = 1,
 	    _getTime = Date.now,
 	    _time1 = _getTime(),
@@ -276,31 +274,31 @@
 	},
 	    _refreshAll = function _refreshAll(force) {
 	  var refreshInits = _dispatch("refreshInit"),
-	      l = _triggers.length;
+	      l = _triggers.length,
+	      i = l;
 
-	  _i = l;
-
-	  while (_i--) {
-	    _triggers[_i].scroll.rec = _triggers[_i].scroll();
+	  while (i--) {
+	    _triggers[i].scroll.rec = _triggers[i].scroll();
 	  }
 
-	  for (_i = 0; _i < l; _i++) {
-	    _triggers[_i] && _triggers[_i].refresh(force !== true);
+	  for (i = 0; i < l; i++) {
+	    _triggers[i] && _triggers[i].refresh(force !== true);
 	  }
 
 	  refreshInits.forEach(function (result) {
 	    return result && result.render && result.render(-1);
 	  });
-	  _i = _triggers.length;
+	  i = _triggers.length;
 
-	  while (_i--) {
-	    _triggers[_i].scroll.rec = 0;
+	  while (i--) {
+	    _triggers[i].scroll.rec = 0;
 	  }
 
 	  _dispatch("refresh");
 	},
 	    _updateAll = function _updateAll() {
 	  var l = _triggers.length,
+	      i = 0,
 	      time = _getTime(),
 	      recordVelocity = time - _time1 >= 50;
 
@@ -315,8 +313,8 @@
 	    _time1 = time;
 	  }
 
-	  for (_i = 0; _i < l; _i++) {
-	    _triggers[_i] && _triggers[_i].update(0, recordVelocity);
+	  for (; i < l; i++) {
+	    _triggers[i] && _triggers[i].update(0, recordVelocity);
 	  }
 
 	  _request = 0;
@@ -767,8 +765,7 @@
 	      }
 
 	      var prevScroll = Math.max(self.scroll(), self.scroll.rec || 0),
-	          prevProgress = self.progress,
-	          prevAnimProgress = animation && animation.progress();
+	          prevProgress = self.progress;
 	      _refreshing = 1;
 	      scrubTween && scrubTween.kill();
 	      invalidateOnRefresh && animation && animation.progress(0).invalidate().progress(self.progress);
@@ -903,7 +900,6 @@
 	      self.scroll() < prevScroll && self.scroll(prevScroll);
 	      self.revert(false);
 	      _refreshing = 0;
-	      prevAnimProgress && isToggle && animation.progress(prevAnimProgress, true);
 
 	      if (prevProgress !== self.progress) {
 	        scrubTween && animation.totalProgress(prevProgress, true);
@@ -966,7 +962,7 @@
 	          if (!isViewport) {
 	            pinSetter(pinStart + pinChange * clipped);
 	          } else if (stateChanged) {
-	            action = !reset && end + 1 > scroll && scroll + 1 >= _maxScroll(scroller, direction);
+	            action = !reset && scroll + 1 >= _maxScroll(scroller, direction);
 
 	            if (pinReparent) {
 	              if (!_refreshing && (isActive || action)) {
@@ -999,7 +995,9 @@
 	        if (stateChanged && !_refreshing) {
 	          toggleState = clipped && !prevProgress ? 0 : clipped === 1 ? 1 : prevProgress === 1 ? 2 : 3;
 
-	          if (isToggle) {
+	          if (clipped === 1 && once) {
+	            self.kill();
+	          } else if (isToggle) {
 	            action = !toggled && toggleActions[toggleState + 1] !== "none" && toggleActions[toggleState + 1] || toggleActions[toggleState];
 
 	            if (animation && (action === "complete" || action === "reset" || action in animation)) {
@@ -1015,10 +1013,10 @@
 	            onUpdate && onUpdate(self);
 	          }
 
-	          if (toggled || !_limitCallbacks) {
+	          if (toggled || !_startup) {
 	            onToggle && toggled && onToggle(self);
 	            callbacks[toggleState] && callbacks[toggleState](self);
-	            once && (clipped === 1 ? self.kill() : callbacks[toggleState] = 0);
+	            once && (callbacks[toggleState] = 0);
 
 	            if (!toggled) {
 	              toggleState = clipped === 1 ? 1 : 3;
@@ -1045,7 +1043,7 @@
 	        _addListener(scroller, "scroll", _onScroll);
 
 	        onRefreshInit && _addListener(ScrollTrigger, "refreshInit", onRefreshInit);
-	        !animation || !animation.add ? self.refresh() : gsap.delayedCall(0.01, self.refresh) && (change = 0.01) && (start = end = 0);
+	        animation && (animation.add ? gsap.delayedCall(0.01, self.refresh) && (change = 0.01) && (start = end = 0) : self.refresh());
 	      }
 	    };
 
@@ -1082,11 +1080,8 @@
 	      self.disable(reset);
 	      id && delete _ids[id];
 
-	      var i = _triggers.indexOf(self);
+	      _triggers.splice(_triggers.indexOf(self), 1);
 
-	      _triggers.splice(i, 1);
-
-	      i === _i && _i--;
 	      animation && (animation.scrollTrigger = null);
 	    };
 
@@ -1182,15 +1177,9 @@
 	    });
 	  };
 
-	  ScrollTrigger.config = function config(vars) {
-	    "limitCallbacks" in vars && (_limitCallbacks = !!vars.limitCallbacks);
-	    var ms = vars.syncInterval;
-	    ms && clearInterval(_syncInterval) || (_syncInterval = ms) && setInterval(_sync, ms);
-	  };
-
 	  return ScrollTrigger;
 	}();
-	ScrollTrigger.version = "3.3.4";
+	ScrollTrigger.version = "3.3.3";
 
 	ScrollTrigger.create = function (vars, animation) {
 	  return new ScrollTrigger(vars, animation);
@@ -1216,6 +1205,10 @@
 
 	ScrollTrigger.getAll = function () {
 	  return _triggers.slice(0);
+	};
+
+	ScrollTrigger.syncInterval = function (ms) {
+	  return clearInterval(_syncInterval) || (_syncInterval = ms) && setInterval(_sync, ms);
 	};
 
 	ScrollTrigger.isScrolling = function () {
@@ -1261,8 +1254,7 @@
 
 	  if (_isFunction(batchMax)) {
 	    batchMax = batchMax();
-
-	    _addListener(ScrollTrigger, "refresh", function () {
+	    ScrollTrigger.addEventListener("refresh", function () {
 	      return batchMax = vars.batchMax();
 	    });
 	  }
