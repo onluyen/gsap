@@ -36,23 +36,8 @@ declare namespace gsap.plugins {
      * @param {ArrayToRawPathObject} vars
      * @returns {RawPath} The converted rawPath
      * @memberof MotionPathPlugin
-     * @link https://greensock.com/docs/v3/Plugins/MotionPathPlugin/static.arrayToRawPath()
      */
     arrayToRawPath(values: Point2D[], vars?: ArrayToRawPathObject): RawPath;
-
-    /**
-     * Measures the path and caches the values on the RawPath itself for fast and accurate subsequent processing.
-     *
-     * ```js
-     * MotionPathPlugin.cacheRawPathMeasurements(rawPath);
-     * ```
-     *
-     * @param {RawPath} rawPath
-     * @param {number} resolution
-     * @returns {RawPath} the RawPath that was passed in
-     * @memberof MotionPathPlugin
-     */
-    cacheRawPathMeasurements(rawPath: RawPath, resolution?: number): RawPath;
 
     /**
      * Gets the matrix to convert points from one element's local coordinates into a
@@ -66,7 +51,6 @@ declare namespace gsap.plugins {
      * @param {Element} toElement
      * @returns {Matrix2D} A matrix to convert from one element's coordinate system to another's
      * @memberof MotionPathPlugin
-     * @link https://greensock.com/docs/v3/Plugins/MotionPathPlugin/static.convertCoordinates()
      */
     convertCoordinates(fromElement: Element, toElement: Element): Matrix2D;
     /**
@@ -80,11 +64,10 @@ declare namespace gsap.plugins {
      * @param {Element} fromElement
      * @param {Element} toElement
      * @param {Point2D} point
-     * @returns {Point2D} the converted point
+     * @returns {Point2D} A matrix to convert from one element's coordinate system to another's
      * @memberof MotionPathPlugin
-     * @link https://greensock.com/docs/v3/Plugins/MotionPathPlugin/static.convertCoordinates()
      */
-      convertCoordinates(fromElement: Element, toElement: Element, point: Point2D): Point2D;
+      convertCoordinates(fromElement: Element, toElement: Element, point: Point2D): Matrix2D;
 
     /**
      * Converts SVG shapes into <path>s.
@@ -97,7 +80,6 @@ declare namespace gsap.plugins {
      * @param {boolean} [swap] 
      * @returns {SVGPathElement[]} The converted paths
      * @memberof MotionPathPlugin
-     * @link https://greensock.com/docs/v3/Plugins/MotionPathPlugin/static.convertToPath()
      */
     convertToPath(shape: SVGPathTarget, swap?: boolean): SVGPathElement[];
 
@@ -115,7 +97,6 @@ declare namespace gsap.plugins {
      * @param {number[] | Point2D | "auto"} [toOrigin]
      * @returns {Matrix2D} A matrix to convert from one element's coordinate system to another's
      * @memberof MotionPathPlugin
-     * @link https://greensock.com/docs/v3/Plugins/MotionPathPlugin/static.getAlignMatrix()
      */
     getAlignMatrix(fromElement: Element, toElement: Element, fromOrigin?: number[] | Point2D, toOrigin?: number[] | Point2D | "auto"): Matrix2D;
 
@@ -132,7 +113,6 @@ declare namespace gsap.plugins {
      * @param {Boolean} [adjustGOffset]
      * @returns {Matrix2D} A matrix to convert from one element's coordinate system to another's
      * @memberof MotionPathPlugin
-     * @link https://greensock.com/docs/v3/Plugins/MotionPathPlugin/static.getGlobalMatrix()
      */
     getGlobalMatrix(element: Element, inverse?: boolean, adjustGOffset?: boolean): Matrix2D;
 
@@ -149,7 +129,6 @@ declare namespace gsap.plugins {
      * @param {Boolean} [includeAngle]
      * @returns {Matrix2D} A matrix to convert from one element's coordinate system to another's
      * @memberof MotionPathPlugin
-     * @link https://greensock.com/docs/v3/Plugins/MotionPathPlugin/static.getPositionOnPath()
      */
     getPositionOnPath(rawPath: RawPath, progress: number, includeAngle?: boolean): Point2D | getRelativePositionObject;
 
@@ -163,7 +142,6 @@ declare namespace gsap.plugins {
      * @param {DOMTarget} value
      * @returns {RawPath} The rawPath
      * @memberof MotionPathPlugin
-     * @link https://greensock.com/docs/v3/Plugins/MotionPathPlugin/static.getRawPath()
      */
     getRawPath(value: SVGPathValue): RawPath;
 
@@ -180,7 +158,6 @@ declare namespace gsap.plugins {
      * @param {number[] | Point2D[] | "auto"} [toOrigin]
      * @returns {Point2D} The x and y between the references given
      * @memberof MotionPathPlugin
-     * @link https://greensock.com/docs/v3/Plugins/MotionPathPlugin/static.getRelativePosition()
      */
     getRelativePosition(fromElement: Element, toElement: Element, fromOrigin?: number[] | Point2D, toOrigin?: number[] | Point2D | "auto"): Point2D;
 
@@ -195,7 +172,6 @@ declare namespace gsap.plugins {
      * @param {number} [curviness]
      * @returns {number[]} Cubic Bezier data in alternating x, y, x, y format
      * @memberof MotionPathPlugin
-     * @link https://greensock.com/docs/v3/Plugins/MotionPathPlugin/static.pointsToSegment()
      */
     pointsToSegment(points: number[], curviness?: number): number[];
 
@@ -209,7 +185,6 @@ declare namespace gsap.plugins {
      * @param {RawPath} rawPath
      * @returns {string} The converted path
      * @memberof MotionPathPlugin
-     * @link https://greensock.com/docs/v3/Plugins/MotionPathPlugin/static.rawPathToString()
      */
     rawPathToString(rawPath: RawPath): string;
 
@@ -225,7 +200,6 @@ declare namespace gsap.plugins {
      * @param {number} end
      * @returns {RawPath} The sliced RawPath
      * @memberof MotionPathPlugin
-     * @link https://greensock.com/docs/v3/Plugins/MotionPathPlugin/static.sliceRawPath()
      */
     sliceRawPath(rawPath: RawPath, start: number, end: number): RawPath;
 
@@ -239,7 +213,6 @@ declare namespace gsap.plugins {
      * @param {string} data
      * @returns {RawPath} The converted RawPath
      * @memberof MotionPathPlugin
-     * @link https://greensock.com/docs/v3/Plugins/MotionPathPlugin/static.stringToRawPath()
      */
     stringToRawPath(data: string): RawPath;
   }
@@ -267,7 +240,6 @@ declare namespace MotionPath {
     start?: number;
     type?: string;
     useRadians?: boolean;
-    fromCurrent?: boolean;
   }
 }
 
@@ -289,24 +261,5 @@ declare module "gsap/src/MotionPathPlugin" {
 }
 
 declare module "gsap/all" {
-  export * from "gsap/MotionPathPlugin";
-}
-
-declare module "gsap-trial/MotionPathPlugin" {
-  export const MotionPathPlugin: gsap.plugins.MotionPathPlugin;
-  export { MotionPathPlugin as default };
-}
-
-declare module "gsap-trial/dist/MotionPathPlugin" {
-  export * from "gsap/MotionPathPlugin";
-  export { MotionPathPlugin as default } from "gsap/MotionPathPlugin";
-}
-
-declare module "gsap-trial/src/MotionPathPlugin" {
-  export * from "gsap/MotionPathPlugin";
-  export { MotionPathPlugin as default } from "gsap/MotionPathPlugin";
-}
-
-declare module "gsap-trial/all" {
   export * from "gsap/MotionPathPlugin";
 }
